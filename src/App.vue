@@ -27,26 +27,48 @@
         </svg>
       </button>
     </div>
+    <div
+      v-if="!lines.length && !searchKey"
+      class="bg-gray-500 text-white rounded h-16 text-center pt-3 font-bold mt-3"
+    >
+      Make your search know !
+    </div>
+    <div
+      v-if="!lines.length && searchKey"
+      class="mt-3 bg-red-500 text-white rounded text-center p-2"
+    >
+      There is no result !
+    </div>
     <div class="content text-center">
-      <div class="text-xl" v-for="line in lines" :key="line">{{ line }}</div>
+      <div class="text-xl m-4" v-for="line in lines" :key="line">
+        {{ line }} <br />
+      </div>
     </div>
   </main>
 </template>
 <style scoped></style>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useStore } from "vuex";
 
 const searchKey = ref("");
 const store = useStore();
 const fileContent = ref("");
 const lines = ref([]);
-const search = () => {
-  let linesArray = fileContent.value.split("\n");
-  lines.value = linesArray.filter((line) => line.includes(searchKey.value));
-};
+watch(searchKey, (newVal) => {
+  if (newVal) {
+    lines.value = fileContent.value
+      .split("\n")
+      .filter((line) => line.toLowerCase().includes(newVal.toLowerCase()));
+  } else {
+    lines.value = [];
+  }
+});
+
 onMounted(async () => {
   let res = await store.dispatch("getFileContent");
   fileContent.value = res;
+
+  // lines.value = fileContent.value.split("\n");
 });
 </script>
