@@ -3,6 +3,8 @@ import axios from "axios";
 const store = createStore({
   state() {
     return {
+      isAdmin: false,
+      password: "",
       files: [],
       fileContent: "",
       PROD_MODE: true,
@@ -26,6 +28,12 @@ const store = createStore({
     },
     setFiles(state, payload) {
       state.files = payload;
+    },
+    setIsAdmin(state, payload) {
+      state.isAdmin = payload;
+    },
+    setPassword(state, payload) {
+      state.password = payload;
     },
   },
   actions: {
@@ -98,6 +106,67 @@ const store = createStore({
       const res = await axios.post(uri, formData);
       dispatch("initFiles"); //refresh
       return res.data;
+    },
+    async checkAdmin({ commit, state }, password) {
+      let uri = "";
+      if (state.PROD_MODE) {
+        if (state.PROD.SERVER_LANG == "NODE") {
+          uri = state.PROD.NODE;
+        } else if (state.PROD.SERVER_LANG == "PHP") {
+          uri =
+            state.PROD.PHP +
+            "/src/admin.module/admin.controller.php?password=" +
+            password;
+        }
+      } else {
+        //local
+        if (state.DEV.SERVER_LANG == "NODE") {
+          uri = state.DEV.NODE;
+        } else if (state.DEV.SERVER_LANG == "PHP") {
+          uri =
+            state.DEV.PHP +
+            "/src/admin.module/admin.controller.php?password=" +
+            password;
+        }
+      }
+      const res = await axios.get(uri);
+      console.log(res);
+      if (res.data.isAdmin) {
+        commit("setIsAdmin", true);
+        commit("setPassword", password);
+      }
+      return res.data.isAdmin;
+    },
+    async deleteFile({ dispatch, state }, fileName) {
+      let uri = "";
+      if (state.PROD_MODE) {
+        if (state.PROD.SERVER_LANG == "NODE") {
+          uri = state.PROD.NODE;
+        } else if (state.PROD.SERVER_LANG == "PHP") {
+          uri =
+            state.PROD.PHP +
+            "/src/files.module/file.controller.php?delete=" +
+            fileName +
+            "&&password=" +
+            state.password;
+        }
+      } else {
+        //local
+        if (state.DEV.SERVER_LANG == "NODE") {
+          uri = state.DEV.NODE;
+        } else if (state.DEV.SERVER_LANG == "PHP") {
+          uri =
+            state.DEV.PHP +
+            "/src/files.module/file.controller.php?delete=" +
+            fileName +
+            "&&password=" +
+            state.password;
+        }
+      }
+      console.log("delete");
+      const res = await axios.get(uri);
+      console.log(res);
+      dispatch("initFiles"); //refresh
     },
   },
 });

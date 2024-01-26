@@ -3,7 +3,7 @@
     <div
       v-if="alert"
       :class="{
-        'fixed top-1/2  p-2 min-w-full text-white right-0 h-content rounded text-center': true,
+        'fixed top-1/2 min-h-20  p-2 min-w-full text-white right-0 h-content rounded text-center': true,
         'bg-red-500': error,
         'bg-green-500': success,
       }"
