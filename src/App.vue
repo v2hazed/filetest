@@ -14,7 +14,7 @@
           placeholder="Recherche"
           class="p-2 rounded border-2 border-gray-500 w-3/4"
         />
-        <button @click="search" class="bg-blue-500 text-white p-2 rounded mx-2">
+        <button class="bg-blue-500 text-white p-2 rounded mx-2">
           Search🔎
         </button>
       </div>
@@ -22,7 +22,7 @@
     <div id="results" v-if="!consulting">
       <div
         class="text-center text-white m-4 flex flex-row justify-center space-x-2"
-        v-for="file in files"
+        v-for="file in store.state.files"
         :key="file"
       >
         <span class="w-3/4 text-black rounded bg-gray-300 pt-1">{{
@@ -108,44 +108,26 @@
 <style scoped></style>
 <script setup>
 import { ref, onMounted, watch } from "vue";
-// import { useStore } from "vuex";
+import { useStore } from "vuex";
 import InputFile from "./components/InputFile.vue";
 
 const searchKey = ref("");
-// const store = useStore();
+const store = useStore();
 // const fileContent = ref("");
-const files = ref([]);
 const consulting = ref(false);
 const content = ref("");
 watch(searchKey, async (newVal) => {
+  //searching
   if (newVal) {
-    const response = await fetch("http://localhost:3000/file", {
-      method: "GET",
-    });
-    let res = await response.json();
-    res = res.filter((file) =>
-      file.name.toLowerCase().includes(newVal.toLowerCase())
-    );
-    files.value = res;
+    await store.dispatch("search", newVal);
   } else {
-    files.value = [];
+    await store.dispatch("initFiles");
   }
 });
 
 onMounted(async () => {
-  const response = await fetch("http://localhost:3000/file", {
-    method: "GET",
-  });
-  const res = await response.json();
-  files.value = res;
-  // let res = await store.dispatch("getFileContent");
-  // lines.value = fileContent.value.split("\n");
+  await store.dispatch("initFiles");
 });
-
-// const urlify = (fileName) => {
-//   const domain = "http://localhost:3000/files";
-//   return `${domain}/${encodeURIComponent(fileName)}`;
-// };
 
 const consult = (file) => {
   consulting.value = true;
@@ -156,19 +138,27 @@ const returnToResult = () => {
 };
 
 const downloadFile = (file) => {
-  const fileUrl = "http://localhost:3000/files/" + file.name; // Replace with the actual file URL
-  const fileName = file.name; // Replace with the desired file name
-
-  // Create a temporary anchor element
-  const link = document.createElement("a");
-  link.href = fileUrl;
-  link.download = fileName;
-
-  // Append the anchor element to the document and trigger a click event
-  document.body.appendChild(link);
-  link.click();
-
-  // Remove the anchor element after the click event
-  document.body.removeChild(link);
+  let uri = "";
+  if (store.state.PROD_MODE) {
+    if (store.state.PROD.SERVER_LANG == "NODE") {
+      uri = store.state.PROD.NODE;
+    } else if (store.state.PROD.SERVER_LANG == "PHP") {
+      uri =
+        store.state.PROD.PHP +
+        "/src/files.module/file.controller.php?filename=" +
+        file.name;
+    }
+  } else {
+    //local
+    if (store.state.DEV.SERVER_LANG == "NODE") {
+      uri = store.state.DEV.NODE;
+    } else if (store.state.DEV.SERVER_LANG == "PHP") {
+      uri =
+        store.state.DEV.PHP +
+        "/src/files.module/file.controller.php?filename=" +
+        file.name;
+    }
+  }
+  window.open(uri, "_blank");
 };
 </script>
