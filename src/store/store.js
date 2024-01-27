@@ -130,7 +130,6 @@ const store = createStore({
         }
       }
       const res = await axios.get(uri);
-      console.log(res);
       if (res.data.isAdmin) {
         commit("setIsAdmin", true);
         commit("setPassword", password);
@@ -163,7 +162,6 @@ const store = createStore({
             state.password;
         }
       }
-      console.log("delete");
       const res = await axios.get(uri);
       console.log(res);
       dispatch("initFiles"); //refresh

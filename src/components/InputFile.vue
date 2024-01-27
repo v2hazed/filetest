@@ -8,7 +8,7 @@
         'bg-green-500': success,
       }"
     >
-      {{ alertMsg }} message
+      {{ alertMsg }}
     </div>
     <form id="form">
       <input
@@ -122,13 +122,11 @@ const upload = async () => {
     alert.value = false;
   }, 3000);
   if (res.success) {
-    console.log("success");
     success.value = true;
     setTimeout(() => {
       success.value = false;
     }, 3000);
   } else {
-    console.log("error");
     error.value = true;
     setTimeout(() => {
       error.value = false;
