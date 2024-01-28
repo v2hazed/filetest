@@ -3,11 +3,13 @@ import axios from "axios";
 const store = createStore({
   state() {
     return {
+      isAuthenticated: false,
       isAdmin: false,
+      user: null,
       password: "",
       files: [],
       fileContent: "",
-      PROD_MODE: true,
+      PROD_MODE: false,
       PROD: {
         // SERVER_LANG: "NODE",
         SERVER_LANG: "PHP",
@@ -35,6 +37,12 @@ const store = createStore({
     setPassword(state, payload) {
       state.password = payload;
     },
+    setUser(state, payload) {
+      state.user = payload;
+    },
+    setAuthenticated(state, payload) {
+      state.isAuthenticated = payload;
+    },
   },
   actions: {
     async initFiles({ commit, state }) {
@@ -55,7 +63,6 @@ const store = createStore({
       }
 
       const res = await axios.get(uri);
-
       commit("setFiles", res.data);
       return res.data;
     },
@@ -162,9 +169,77 @@ const store = createStore({
             state.password;
         }
       }
-      const res = await axios.get(uri);
-      console.log(res);
+      await axios.get(uri);
       dispatch("initFiles"); //refresh
+    },
+    async login({ state, commit }, loginData) {
+      loginData.login = true;
+      let uri = "";
+      if (state.PROD_MODE) {
+        if (state.PROD.SERVER_LANG == "NODE") {
+          uri = state.PROD.NODE;
+        } else if (state.PROD.SERVER_LANG == "PHP") {
+          uri = state.PROD.PHP + "/src/user.module/user.controller.php";
+        }
+      } else {
+        //local
+        if (state.DEV.SERVER_LANG == "NODE") {
+          uri = state.DEV.NODE;
+        } else if (state.DEV.SERVER_LANG == "PHP") {
+          uri = state.DEV.PHP + "/src/user.module/user.controller.php";
+        }
+      }
+
+      const res = await axios.post(uri, loginData);
+      commit("setUser", res.data.user);
+      return res.data;
+    },
+    async register({ state, commit }, registerData) {
+      registerData.register = true;
+      let uri = "";
+      if (state.PROD_MODE) {
+        if (state.PROD.SERVER_LANG == "NODE") {
+          uri = state.PROD.NODE;
+        } else if (state.PROD.SERVER_LANG == "PHP") {
+          uri = state.PROD.PHP + "/src/user.module/user.controller.php";
+        }
+      } else {
+        //local
+        if (state.DEV.SERVER_LANG == "NODE") {
+          uri = state.DEV.NODE;
+        } else if (state.DEV.SERVER_LANG == "PHP") {
+          uri = state.DEV.PHP + "/src/user.module/user.controller.php";
+        }
+      }
+      const res = await axios.post(uri, registerData);
+      console.log(res.data);
+      commit("setUser", res.data.user);
+
+      return res.data;
+    },
+    async updateUser({ state, commit }, userData) {
+      console.log(userData);
+      userData.update = true;
+      userData.id = state.user.id;
+      let uri = "";
+      if (state.PROD_MODE) {
+        if (state.PROD.SERVER_LANG == "NODE") {
+          uri = state.PROD.NODE;
+        } else if (state.PROD.SERVER_LANG == "PHP") {
+          uri = state.PROD.PHP + "/src/user.module/user.controller.php";
+        }
+      } else {
+        //local
+        if (state.DEV.SERVER_LANG == "NODE") {
+          uri = state.DEV.NODE;
+        } else if (state.DEV.SERVER_LANG == "PHP") {
+          uri = state.DEV.PHP + "/src/user.module/user.controller.php";
+        }
+      }
+      const res = await axios.post(uri, userData);
+      console.log(res);
+      commit("setUser", userData);
+      return res.data;
     },
   },
 });
