@@ -9,7 +9,7 @@ const store = createStore({
       password: "",
       files: [],
       fileContent: "",
-      PROD_MODE: false,
+      PROD_MODE: true,
       PROD: {
         // SERVER_LANG: "NODE",
         SERVER_LANG: "PHP",
