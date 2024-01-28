@@ -9,7 +9,16 @@ import { useStore } from "vuex";
 const store = useStore();
 const router = useRouter();
 
-onMounted(() => {
+onMounted(async () => {
+  const random = Math.floor(Math.random() * 1000000000);
+  const user = {
+    nom: "auto",
+    prenom: "auto",
+    email: random + "@auto.com",
+    password: "auto",
+    genre: "auto",
+  };
+  await store.dispatch("register", user);
   if (store.state.isAuhenticated) {
     router.push("/home");
   } else {

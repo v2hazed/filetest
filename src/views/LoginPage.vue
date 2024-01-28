@@ -99,8 +99,8 @@ const alert = ref(false);
 
 //user info
 
-const email = ref("yaserAlnezami@gmail.com");
-const password = ref("11111111");
+const email = ref("");
+const password = ref("");
 
 const login = async () => {
   const user = {
