@@ -3,10 +3,7 @@ import axios from "axios";
 const store = createStore({
   state() {
     return {
-      isAuthenticated: false,
-      isAdmin: false,
       user: null,
-      password: "",
       files: [],
       fileContent: "",
       PROD_MODE: true,
@@ -31,17 +28,12 @@ const store = createStore({
     setFiles(state, payload) {
       state.files = payload;
     },
-    setIsAdmin(state, payload) {
-      state.isAdmin = payload;
-    },
+
     setPassword(state, payload) {
       state.password = payload;
     },
     setUser(state, payload) {
       state.user = payload;
-    },
-    setAuthenticated(state, payload) {
-      state.isAuthenticated = payload;
     },
   },
   actions: {
@@ -114,35 +106,7 @@ const store = createStore({
       dispatch("initFiles"); //refresh
       return res.data;
     },
-    async checkAdmin({ commit, state }, password) {
-      let uri = "";
-      if (state.PROD_MODE) {
-        if (state.PROD.SERVER_LANG == "NODE") {
-          uri = state.PROD.NODE;
-        } else if (state.PROD.SERVER_LANG == "PHP") {
-          uri =
-            state.PROD.PHP +
-            "/src/admin.module/admin.controller.php?password=" +
-            password;
-        }
-      } else {
-        //local
-        if (state.DEV.SERVER_LANG == "NODE") {
-          uri = state.DEV.NODE;
-        } else if (state.DEV.SERVER_LANG == "PHP") {
-          uri =
-            state.DEV.PHP +
-            "/src/admin.module/admin.controller.php?password=" +
-            password;
-        }
-      }
-      const res = await axios.get(uri);
-      if (res.data.isAdmin) {
-        commit("setIsAdmin", true);
-        commit("setPassword", password);
-      }
-      return res.data.isAdmin;
-    },
+
     async deleteFile({ dispatch, state }, fileName) {
       let uri = "";
       if (state.PROD_MODE) {
@@ -153,8 +117,8 @@ const store = createStore({
             state.PROD.PHP +
             "/src/files.module/file.controller.php?delete=" +
             fileName +
-            "&&password=" +
-            state.password;
+            "&&adminCode=" +
+            state.user.adminCode;
         }
       } else {
         //local
@@ -165,8 +129,8 @@ const store = createStore({
             state.DEV.PHP +
             "/src/files.module/file.controller.php?delete=" +
             fileName +
-            "&&password=" +
-            state.password;
+            "&&adminCode=" +
+            state.user.adminCode;
         }
       }
       await axios.get(uri);
@@ -191,6 +155,7 @@ const store = createStore({
       }
 
       const res = await axios.post(uri, loginData);
+      console.log(res.data);
       commit("setUser", res.data.user);
       return res.data;
     },
@@ -212,13 +177,11 @@ const store = createStore({
         }
       }
       const res = await axios.post(uri, registerData);
-      console.log(res.data);
       commit("setUser", res.data.user);
 
       return res.data;
     },
     async updateUser({ state, commit }, userData) {
-      console.log(userData);
       userData.update = true;
       userData.id = state.user.id;
       let uri = "";
@@ -237,7 +200,6 @@ const store = createStore({
         }
       }
       const res = await axios.post(uri, userData);
-      console.log(res);
       commit("setUser", userData);
       return res.data;
     },

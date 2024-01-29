@@ -24,6 +24,7 @@
             </label>
             <div class="mt-2">
               <input
+                placeholder="mymailadress@gmail.com"
                 v-model="email"
                 id="email"
                 name="email"
@@ -45,11 +46,34 @@
             </div>
             <div class="mt-2">
               <input
+                placeholder="**********"
                 v-model="password"
                 id="password"
                 name="password"
                 type="password"
                 autocomplete="current-password"
+                required
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <!--admin code-->
+          <div>
+            <div class="flex items-center justify-between">
+              <label
+                for="adminCode"
+                class="block text-sm font-medium leading-6 text-gray-900"
+                >Code admin (facultatif)</label
+              >
+            </div>
+            <div class="mt-2">
+              <input
+                v-model="adminCode"
+                id="adminCode"
+                name="adminCode"
+                type="password"
+                autocomplete="current-password"
+                placeholder="1234"
                 required
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -99,17 +123,19 @@ const alert = ref(false);
 
 //user info
 
-const email = ref("");
-const password = ref("");
+const email = ref("yaserAlnezami@gmail.com");
+const password = ref("11111111");
+const adminCode = ref("mota22");
 
 const login = async () => {
   const user = {
     email: email.value,
     password: password.value,
+    adminCode: adminCode.value,
   };
   const result = await store.dispatch("login", user);
   if (result.user == null) {
-    lanceAlert(result.message);
+    lanceAlert(result);
   } else {
     router.push("/home");
   }

@@ -19,31 +19,7 @@
         </svg>
       </router-link>
     </div>
-    <!--confirm admin-->
-    <div
-      v-if="confirmDeleteBool"
-      class="fixed top-0 right-1/4 z-10 bg-black p-2 rounded text-white"
-    >
-      <input
-        type="password"
-        id="password"
-        v-model="password"
-        class="p-2 rounded border-2 border-gray-800 mx-1 text-black"
-        placeholder="Admin password"
-      />
-      <button
-        @click="checkAdmin"
-        class="bg-blue-500 text-white p-2 rounded mx-2"
-      >
-        Confirm
-      </button>
-      <button
-        @click="confirmDeleteBool = false"
-        class="bg-orange-500 text-white p-2 rounded mx-2"
-      >
-        Cancel
-      </button>
-    </div>
+
     <div class="motasem bg-gray-500 p-3 rounded relative">
       <div class="absolute top-0 right-0"><InputFile /></div>
 
@@ -112,7 +88,11 @@
           </svg>
         </button>
         <!--delte-->
-        <button @click="deleteFile(file.name)" class="p-2 bg-red-500 rounded">
+        <button
+          v-if="store.state.user.isAdmin"
+          @click="deleteFile(file.name)"
+          class="p-2 bg-red-500 rounded"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -186,8 +166,6 @@ const getContent = () => {
   const words = content.value.split(" ");
   return words;
 };
-const confirmDeleteBool = ref(false);
-const password = ref("");
 
 watch(searchKey, async (newVal) => {
   //searching
@@ -235,19 +213,6 @@ const downloadFile = (file) => {
   window.open(uri, "_blank");
 };
 const deleteFile = (fileName) => {
-  if (store.state.isAdmin) {
-    store.dispatch("deleteFile", fileName);
-  } else {
-    confirmDeleteBool.value = true;
-  }
-};
-const checkAdmin = async () => {
-  const res = await store.dispatch("checkAdmin", password.value);
-  if (res) {
-    store.state.isAdmin = true;
-    confirmDeleteBool.value = false;
-  } else {
-    alert("Wrong password");
-  }
+  store.dispatch("deleteFile", fileName);
 };
 </script>

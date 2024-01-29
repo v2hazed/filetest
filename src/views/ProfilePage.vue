@@ -192,7 +192,6 @@ const email = ref(store.state.user.email);
 const password = ref(store.state.user.password);
 const confirmPassword = ref(store.state.user.password);
 const logout = () => {
-  console.log("logout");
   store.commit("setUser", null);
   store.commit("setIsAuhenticated", false);
   router.push("/login");
