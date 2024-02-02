@@ -135,7 +135,7 @@ const login = async () => {
   };
   const result = await store.dispatch("login", user);
   if (result.user == null) {
-    lanceAlert(result);
+    lanceAlert(result.message);
   } else {
     router.push("/home");
   }

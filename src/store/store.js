@@ -3,7 +3,7 @@ import axios from "axios";
 const store = createStore({
   state() {
     return {
-      user: null,
+      user: JSON.parse(localStorage.getItem("user")) || null,
       files: [],
       fileContent: "",
       PROD_MODE: true,
@@ -29,11 +29,9 @@ const store = createStore({
       state.files = payload;
     },
 
-    setPassword(state, payload) {
-      state.password = payload;
-    },
     setUser(state, payload) {
       state.user = payload;
+      localStorage.setItem("user", JSON.stringify(payload));
     },
   },
   actions: {
