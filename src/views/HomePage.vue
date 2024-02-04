@@ -2,7 +2,8 @@
   <main class="p-6 min-h-screen w-screen" style="background-color: #494949">
     <!--navbar-->
     <div class="flex bg-white rounded my-2 p-2">
-      <router-link class="bg-gray-500 p-1 rounded" to="/profile"
+      <!--profile-->
+      <router-link class="bg-gray-500 p-1 rounded pt-2" to="/profile"
         ><svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -18,11 +19,11 @@
           />
         </svg>
       </router-link>
+      <!--input file-->
+      <InputFile />
     </div>
 
     <div class="motasem bg-gray-500 p-3 rounded relative">
-      <div class="absolute top-0 right-0"><InputFile /></div>
-
       <div class="container">
         <h1 class="text-center font-bold text-2xl my-2" style="color: #3d3d3d">
           Search your Dox <span class="text-white text-3xl">𓂀</span>

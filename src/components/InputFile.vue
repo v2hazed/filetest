@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center m-2 flex justify-center">
+  <div class="text-center mx-1 flex justify-center">
     <div
       v-if="alert"
       :class="{
@@ -44,7 +44,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-12 h-12 p-2 rounded-full bg-green-500 :hover:bg-green-600 cursor-pointer"
+        class="w-12 h-12 p-2 rounded bg-green-500 :hover:bg-green-600 cursor-pointer"
       >
         <path
           stroke-linecap="round"
@@ -78,7 +78,7 @@
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-10 h-10 bg-blue-500 p-2 rounded-full cursor-pointer :hover:bg-blue-600"
+        class="w-10 h-10 bg-blue-500 p-2 rounded cursor-pointer :hover:bg-blue-600"
       >
         <path
           stroke-linecap="round"
