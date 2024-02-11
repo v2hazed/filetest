@@ -148,4 +148,10 @@ const lanceAlert = (message) => {
     alert.value = false;
   }, 3000);
 };
+document.addEventListener('keydown',(e)=>{
+  let touche =e.key
+  if(touche=='Enter'){
+    login()
+  }
+})
 </script>
